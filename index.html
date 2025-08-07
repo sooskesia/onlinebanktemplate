@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Mobile Banking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div class="login-screen" id="loginScreen">
+            <div class="login-header">
+                <div class="bank-logo">🏦</div>
+                <h1>SecureBank</h1>
+                <p>Secure mobile banking with selfie verification</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password">
+                </div>
+
+                <div class="camera-section">
+                    <div class="camera-container">
+                        <video id="videoElement" autoplay playsinline></video>
+                        <img id="capturedImage" alt="Captured selfie">
+                    </div>
+                    
+                    <div class="camera-controls">
+                        <button type="button" class="btn btn-primary" id="startCameraBtn">
+                            📷 Start Camera
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="captureBtn" disabled>
+                            📸 Capture
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="retakeBtn" style="display: none;">
+                            🔄 Retake
+                        </button>
+                    </div>
+                </div>
+
+                <div id="statusMessage" class="status-message hidden"></div>
+
+                <button type="submit" class="btn btn-success" id="loginBtn" disabled>
+                    🚀 Login to Banking
+                </button>
+            </form>
+        </div>
+
+        <!-- Banking Dashboard -->
+        <div class="banking-screen" id="bankingScreen">
+            <div class="bank-header">
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+                
+                <div class="user-info">
+                    <h2 id="welcomeMessage">Welcome back!</h2>
+                    <p>Last login: Today at 2:30 PM</p>
+                </div>
+
+                <div class="account-balance">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-amount" id="accountBalance">$4,880.00</div>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="dashboardView">
+                <div class="quick-actions">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <div class="actions-grid">
+                        <div class="action-card" onclick="showTransferForm()">
+                            <div class="action-icon">💸</div>
+                            <div class="action-title">Transfer</div>
+                            <div class="action-desc">Send money</div>
+                        </div>
+                        <div class="action-card" onclick="showFeature('Pay Bills')">
+                            <div class="action-icon">📄</div>
+                            <div class="action-title">Pay Bills</div>
+                            <div class="action-desc">Manage payments</div>
+                        </div>
+                        <div class="action-card" onclick="showFeature('Deposit')">
+                            <div class="action-icon">📱</div>
+                            <div class="action-title">Deposit</div>
+                            <div class="action-desc">Mobile check deposit</div>
+                        </div>
+                        <div class="action-card" onclick="showFeature('ATM Locator')">
+                            <div class="action-icon">🗺️</div>
+                            <div class="action-title">ATM Locator</div>
+                            <div class="action-desc">Find nearby ATMs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-transactions">
+                    <h3 class="section-title">Recent Transactions</h3>
+                    <div class="transaction-list">
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-title">Coffee Shop Purchase</div>
+                                <div class="transaction-date">Today, 10:30 AM</div>
+                            </div>
+                            <div class="transaction-amount negative">-$4.75</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-title">Salary Deposit</div>
+                                <div class="transaction-date">Yesterday, 9:00 AM</div>
+                            </div>
+                            <div class="transaction-amount positive">+$3,200.00</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-title">Online Purchase</div>
+                                <div class="transaction-date">Aug 5, 2:15 PM</div>
+                            </div>
+                            <div class="transaction-amount negative">-$89.99</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-title">Grocery Store</div>
+                                <div class="transaction-date">Aug 4, 6:45 PM</div>
+                            </div>
+                            <div class="transaction-amount negative">-$127.43</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Form -->
+            <div class="transfer-screen" id="transferScreen" style="display: none;">
+                <div class="transfer-header">
+                    <button class="back-btn" id="backToDashboard">← Back</button>
+                    <h2>💸 Send Money</h2>
+                    <p>Enter recipient's banking information</p>
+                </div>
+
+                <div class="transfer-form-container">
+                    <form id="transferForm">
+                        <!-- Amount Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">Transfer Amount</h3>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input type="text" id="transferAmount" 
+                                       placeholder="0.00" class="amount-input">
+                            </div>
+                            <div class="balance-note">Available: $4,880.00</div>
+                        </div>
+
+                        <!-- Recipient Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">Recipient Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="recipientName">Full Name</label>
+                                <input type="text" id="recipientName" 
+                                       placeholder="John Michael Smith">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recipientAddress">Street Address</label>
+                                <input type="text" id="recipientAddress" 
+                                       placeholder="123 Main Street, Apt 4B">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="recipientCity">City</label>
+                                    <input type="text" id="recipientCity" 
+                                           placeholder="New York">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipientState">State/Province</label>
+                                    <input type="text" id="recipientState" 
+                                           placeholder="NY / Ontario">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipientZip">Postal Code</label>
+                                    <input type="text" id="recipientZip" 
+                                           placeholder="10001 / M5V 3A8">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recipientCountry">Country</label>
+                                <input type="text" id="recipientCountry" 
+                                       placeholder="United States">
+                            </div>
+                        </div>
+
+                        <!-- Banking Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">Banking Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="bankName">Bank Name</label>
+                                <input type="text" id="bankName" 
+                                       placeholder="Chase Bank">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="accountNumber">Account Number</label>
+                                <input type="text" id="accountNumber" 
+                                       placeholder="1234567890">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="routingNumber">Routing Number / Sort Code / SWIFT</label>
+                                <input type="text" id="routingNumber" 
+                                       placeholder="021000021 / 12-34-56 / CHASUS33">
+                                <small class="input-note">Bank routing identifier (format varies by country)</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="accountType">Account Type</label>
+                                <select id="accountType">
+                                    <option value="">Select account type</option>
+                                    <option value="checking">Checking</option>
+                                    <option value="savings">Savings</option>
+                                    <option value="business">Business</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Details -->
+                        <div class="form-section">
+                            <h3 class="section-title">Transfer Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="transferMemo">Memo (Optional)</label>
+                                <input type="text" id="transferMemo" 
+                                       placeholder="Payment for services">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transferSpeed">Transfer Speed</label>
+                                <select id="transferSpeed">
+                                    <option value="standard">Standard (1-3 business days) - FREE</option>
+                                    <option value="expedited">Expedited (Next business day) - $15.00</option>
+                                    <option value="instant">Instant (Within minutes) - $25.00</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Security Verification -->
+                        <div class="form-section security-section">
+                            <h3 class="section-title">🔒 Security Verification</h3>
+                            <div class="verification-note">
+                                <p>For your security, all transfers require additional verification.</p>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-transfer">
+                            🚀 Review & Send Transfer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
